@@ -56,6 +56,7 @@ const Discover = () => {
                 category,
                 description: `Skill offered by ${userProfile.name}`,
                 location: userProfile.location,
+                duration: "1 hour", // Add the missing duration property
                 matchPercentage: 100, // Perfect match
                 distance: "0 miles", // It's your own skill
                 userName: userProfile.name,
