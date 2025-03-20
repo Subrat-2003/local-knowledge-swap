@@ -1,8 +1,10 @@
+
 import { useEffect } from 'react';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Hero from '@/components/Hero';
 import SkillCard from '@/components/SkillCard';
+import { Link } from 'react-router-dom';
 import { Skill } from '@/data/skillsData';
 
 const featuredSkills: Skill[] = [
@@ -75,10 +77,12 @@ const Index = () => {
           </div>
           
           <div className="mt-12 text-center">
-            <Button className="gap-2">
-              Explore All Skills
-              <ArrowRight size={16} />
-            </Button>
+            <Link to="/discover">
+              <Button className="gap-2">
+                Explore All Skills
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -94,42 +98,50 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="glass-card rounded-xl p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl font-semibold text-primary">1</span>
+            <Link to="/profile" className="block w-full">
+              <div className="glass-card rounded-xl p-6 text-center h-full hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-xl font-semibold text-primary">1</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Create Your Profile</h3>
+                <p className="text-muted-foreground">
+                  Sign up and list the skills you can offer and the ones you want to learn.
+                </p>
               </div>
-              <h3 className="text-xl font-medium mb-3">Create Your Profile</h3>
-              <p className="text-muted-foreground">
-                Sign up and list the skills you can offer and the ones you want to learn.
-              </p>
-            </div>
+            </Link>
             
-            <div className="glass-card rounded-xl p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl font-semibold text-primary">2</span>
+            <Link to="/discover" className="block w-full">
+              <div className="glass-card rounded-xl p-6 text-center h-full hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-xl font-semibold text-primary">2</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Match & Connect</h3>
+                <p className="text-muted-foreground">
+                  Our system will match you with people in your area based on your skills.
+                </p>
               </div>
-              <h3 className="text-xl font-medium mb-3">Match & Connect</h3>
-              <p className="text-muted-foreground">
-                Our system will match you with people in your area based on your skills.
-              </p>
-            </div>
+            </Link>
             
-            <div className="glass-card rounded-xl p-6 text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl font-semibold text-primary">3</span>
+            <Link to="/exchange" className="block w-full">
+              <div className="glass-card rounded-xl p-6 text-center h-full hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-xl font-semibold text-primary">3</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Exchange & Grow</h3>
+                <p className="text-muted-foreground">
+                  Schedule sessions, exchange skills using coins, and build your community.
+                </p>
               </div>
-              <h3 className="text-xl font-medium mb-3">Exchange & Grow</h3>
-              <p className="text-muted-foreground">
-                Schedule sessions, exchange skills using coins, and build your community.
-              </p>
-            </div>
+            </Link>
           </div>
           
           <div className="mt-12 text-center">
-            <Button className="gap-2">
-              Join Now
-              <ArrowRight size={16} />
-            </Button>
+            <Link to="/profile">
+              <Button className="gap-2">
+                Join Now
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -190,7 +202,9 @@ const Index = () => {
             Join our community today and begin exchanging skills with people near you.
             No money needed—just your knowledge and willingness to learn.
           </p>
-          <Button size="lg" className="px-8 h-12 text-base">Create Your Profile</Button>
+          <Link to="/profile">
+            <Button size="lg" className="px-8 h-12 text-base">Create Your Profile</Button>
+          </Link>
         </div>
       </section>
     </div>

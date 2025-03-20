@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Users, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -48,13 +49,17 @@ const Hero = () => {
           "mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-appear stagger-3",
           isVisible ? "opacity-100" : "opacity-0"
         )}>
-          <Button size="lg" className="px-8 gap-2 text-base h-12">
-            Join the Community
-            <ArrowRight size={16} />
-          </Button>
-          <Button size="lg" variant="outline" className="px-8 text-base h-12">
-            Explore Skills
-          </Button>
+          <Link to="/profile">
+            <Button size="lg" className="px-8 gap-2 text-base h-12">
+              Join the Community
+              <ArrowRight size={16} />
+            </Button>
+          </Link>
+          <Link to="/discover">
+            <Button size="lg" variant="outline" className="px-8 text-base h-12">
+              Explore Skills
+            </Button>
+          </Link>
         </div>
         
         <div className={cn(

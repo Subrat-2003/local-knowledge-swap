@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CoinBalance from '@/components/CoinBalance';
 import { cn } from '@/lib/utils';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription 
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 type ExchangeRequest = {
   id: string;
@@ -81,6 +91,9 @@ const Exchange = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [requests, setRequests] = useState<ExchangeRequest[]>(dummyRequests);
+  const [selectedRequest, setSelectedRequest] = useState<ExchangeRequest | null>(null);
+  const { toast } = useToast();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -119,6 +132,35 @@ const Exchange = () => {
   const handleSelectDate = (date: Date) => {
     setSelectedDate(date);
   };
+
+  const handleAcceptRequest = (requestId: string) => {
+    // Update the request status
+    const updatedRequests = requests.map(req => 
+      req.id === requestId ? { ...req, status: 'confirmed' as const } : req
+    );
+    setRequests(updatedRequests);
+    
+    toast({
+      title: "Request Accepted",
+      description: "The skill exchange has been confirmed.",
+    });
+  };
+  
+  const handleDeclineRequest = (requestId: string) => {
+    const updatedRequests = requests.map(req => 
+      req.id === requestId ? { ...req, status: 'declined' as const } : req
+    );
+    setRequests(updatedRequests);
+    
+    toast({
+      title: "Request Declined",
+      description: "The skill exchange request has been declined.",
+    });
+  };
+
+  const handleViewDetails = (request: ExchangeRequest) => {
+    setSelectedRequest(request);
+  };
   
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 md:px-6">
@@ -154,7 +196,7 @@ const Exchange = () => {
           
           <div className="animate-fade-in">
             <TabsContent value="received" className="mt-0 space-y-6">
-              {dummyRequests.map((request) => (
+              {requests.map((request) => (
                 <div 
                   key={request.id} 
                   className="glass-card rounded-xl p-5 transition-all duration-300"
@@ -210,11 +252,19 @@ const Exchange = () => {
                       
                       {request.status === 'pending' && (
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="text-destructive">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-destructive"
+                            onClick={() => handleDeclineRequest(request.id)}
+                          >
                             <CircleX size={14} className="mr-1" />
                             Decline
                           </Button>
-                          <Button size="sm">
+                          <Button 
+                            size="sm"
+                            onClick={() => handleAcceptRequest(request.id)}
+                          >
                             <CheckCircle2 size={14} className="mr-1" />
                             Accept
                           </Button>
@@ -222,10 +272,72 @@ const Exchange = () => {
                       )}
                       
                       {request.status === 'confirmed' && (
-                        <Button size="sm">
-                          <Calendar size={14} className="mr-1" />
-                          View Details
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              size="sm"
+                              onClick={() => handleViewDetails(request)}
+                            >
+                              <Calendar size={14} className="mr-1" />
+                              View Details
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[500px]">
+                            <DialogHeader>
+                              <DialogTitle>Exchange Details</DialogTitle>
+                              <DialogDescription>
+                                Skill exchange session information
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="mt-4 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-medium">{request.skillName}</h3>
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  <CheckCircle2 size={12} className="mr-1" />
+                                  Confirmed
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold bg-gradient-to-br from-primary to-primary/70">
+                                  {request.userName.charAt(0)}
+                                </div>
+                                <span>{request.userName}</span>
+                              </div>
+                              <div className="bg-secondary/50 rounded-lg p-4 space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <Calendar size={16} className="text-primary" />
+                                  <span className="font-medium">Date:</span>
+                                  <span>{request.date}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Clock size={16} className="text-primary" />
+                                  <span className="font-medium">Time:</span>
+                                  <span>{request.time}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <MapPin size={16} className="text-primary" />
+                                  <span className="font-medium">Location:</span>
+                                  <span>{request.location}</span>
+                                </div>
+                              </div>
+                              {request.message && (
+                                <div>
+                                  <h4 className="text-sm font-medium mb-1">Message:</h4>
+                                  <p className="text-sm text-muted-foreground">{request.message}</p>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-2 border-t">
+                                <div className="flex items-center text-amber-500 font-medium">
+                                  <CoinsIcon size={16} className="mr-1" />
+                                  {request.coins} coins
+                                </div>
+                                <Button size="sm" variant="outline">
+                                  Add to Calendar
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       )}
                       
                       {request.status === 'declined' && (
