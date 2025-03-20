@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, X, Check, MapPin, UserPlus, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -59,7 +58,6 @@ const ProfileForm = () => {
     toast({
       title: "Profile verified",
       description: "Your profile has been verified successfully.",
-      variant: "success",
     });
   };
   
@@ -69,8 +67,21 @@ const ProfileForm = () => {
     toast({
       title: "Profile created successfully",
       description: "Your skills are now visible in the marketplace.",
-      variant: "success",
     });
+  };
+  
+  const handleOfferedKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addOfferedSkill();
+    }
+  };
+  
+  const handleDesiredKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addDesiredSkill();
+    }
   };
   
   return (
@@ -192,7 +203,7 @@ const ProfileForm = () => {
                   placeholder="Add a skill you can teach..."
                   value={newOfferedSkill}
                   onChange={(e) => setNewOfferedSkill(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault() && addOfferedSkill()}
+                  onKeyDown={handleOfferedKeyDown}
                 />
                 <Button size="icon" type="button" onClick={addOfferedSkill} aria-label="Add skill">
                   <Plus size={16} />
@@ -245,7 +256,7 @@ const ProfileForm = () => {
                   placeholder="Add a skill you want to learn..."
                   value={newDesiredSkill}
                   onChange={(e) => setNewDesiredSkill(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault() && addDesiredSkill()}
+                  onKeyDown={handleDesiredKeyDown}
                 />
                 <Button size="icon" type="button" onClick={addDesiredSkill} aria-label="Add skill">
                   <Plus size={16} />

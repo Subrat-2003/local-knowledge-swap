@@ -1,9 +1,9 @@
-
 import { useEffect } from 'react';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Hero from '@/components/Hero';
-import SkillCard, { Skill } from '@/components/SkillCard';
+import SkillCard from '@/components/SkillCard';
+import { Skill } from '@/data/skillsData';
 
 const featuredSkills: Skill[] = [
   {

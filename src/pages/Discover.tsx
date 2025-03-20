@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Search, Filter, MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,12 +6,17 @@ import { Skill } from '@/data/skillsData';
 import SkillMatchCard from '@/components/SkillMatchCard';
 import { availableSkills, skillCategories } from '@/data/skillsData';
 
+type EnrichedSkill = Skill & { 
+  matchPercentage: number;
+  distance: string;
+};
+
 const Discover = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [skillsData, setSkillsData] = useState<(Skill & { matchPercentage: number, distance: string })[]>([]);
-  const [filteredSkills, setFilteredSkills] = useState<(Skill & { matchPercentage: number, distance: string })[]>([]);
+  const [skillsData, setSkillsData] = useState<EnrichedSkill[]>([]);
+  const [filteredSkills, setFilteredSkills] = useState<EnrichedSkill[]>([]);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,7 +30,7 @@ const Discover = () => {
       distance: `${(Math.random() * 20).toFixed(1)} miles`,
       location: skill.location || ["Chicago", "Seattle", "Austin", "Miami", "Denver", "Portland"][Math.floor(Math.random() * 6)],
       duration: skill.duration || ["30 min", "1 hour", "1.5 hours", "2 hours"][Math.floor(Math.random() * 4)],
-      rating: skill.rating || (Math.random() * 1.5 + 3.5).toFixed(1),
+      rating: skill.rating || Number((Math.random() * 1.5 + 3.5).toFixed(1)),
       userName: skill.userName || ["David Chen", "Marie Dubois", "James Wilson", "Sofia Martinez", "Robert Johnson", "Emma Wilson"][Math.floor(Math.random() * 6)]
     }));
     
