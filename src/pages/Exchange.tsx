@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,7 +63,6 @@ const Exchange = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Simulate loading available times when a date is selected
   useEffect(() => {
     if (selectedDate) {
       const times = [
@@ -81,7 +79,6 @@ const Exchange = () => {
     setSelectedTime(null);
   }, [selectedDate]);
   
-  // Dummy calendar days
   const calendarDays = [
     { date: new Date(2023, 8, 20), available: true },
     { date: new Date(2023, 8, 21), available: true },
@@ -372,7 +369,6 @@ const Exchange = () => {
   );
 };
 
-// Import Coins icon for this component only
 const Coins = (props: any) => {
   return (
     <svg
