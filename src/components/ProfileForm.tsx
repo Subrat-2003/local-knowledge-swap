@@ -1,15 +1,12 @@
 
 import { useState } from 'react';
-import { Plus, X, Check, MapPin } from 'lucide-react';
+import { Plus, X, Check, MapPin, UserPlus, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-
-const skillCategories = [
-  "Technology", "Arts & Crafts", "Music", "Cooking", "Languages",
-  "Sports & Fitness", "Academic", "Business", "Home Improvement", "Other"
-];
+import { skillCategories as categories, availableSkills } from '@/data/skillsData';
+import { useToast } from '@/hooks/use-toast';
 
 const ProfileForm = () => {
   const [offeredSkills, setOfferedSkills] = useState<string[]>([]);
@@ -18,11 +15,22 @@ const ProfileForm = () => {
   const [newDesiredSkill, setNewDesiredSkill] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Technology');
   const [bio, setBio] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [location, setLocation] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
+  
+  const { toast } = useToast();
   
   const addOfferedSkill = () => {
     if (newOfferedSkill && offeredSkills.length < 5) {
       setOfferedSkills([...offeredSkills, `${selectedCategory}: ${newOfferedSkill}`]);
       setNewOfferedSkill('');
+      
+      toast({
+        title: "Skill added",
+        description: "Your skill has been added to your profile.",
+      });
     }
   };
   
@@ -30,6 +38,11 @@ const ProfileForm = () => {
     if (newDesiredSkill && desiredSkills.length < 5) {
       setDesiredSkills([...desiredSkills, `${selectedCategory}: ${newDesiredSkill}`]);
       setNewDesiredSkill('');
+      
+      toast({
+        title: "Learning interest added",
+        description: "Your learning interest has been added to your profile.",
+      });
     }
   };
   
@@ -41,9 +54,41 @@ const ProfileForm = () => {
     setDesiredSkills(desiredSkills.filter((_, i) => i !== index));
   };
   
+  const handleVerification = () => {
+    setIsVerified(true);
+    toast({
+      title: "Profile verified",
+      description: "Your profile has been verified successfully.",
+      variant: "success",
+    });
+  };
+  
+  const handleSaveProfile = () => {
+    // Here we would connect to a backend to save the profile
+    // For now, show a success toast
+    toast({
+      title: "Profile created successfully",
+      description: "Your skills are now visible in the marketplace.",
+      variant: "success",
+    });
+  };
+  
   return (
     <div className="glass-card rounded-xl p-6 md:p-8 max-w-3xl w-full mx-auto animate-appear">
-      <h2 className="text-2xl font-semibold mb-6">Your Profile</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Create Profile</h2>
+        {isVerified ? (
+          <div className="flex items-center text-sm text-green-600">
+            <BadgeCheck size={16} className="mr-1.5" />
+            Verified Profile
+          </div>
+        ) : (
+          <Button variant="outline" size="sm" onClick={handleVerification}>
+            <BadgeCheck size={14} className="mr-1.5" />
+            Verify Profile
+          </Button>
+        )}
+      </div>
       
       <div className="space-y-8">
         {/* Basic Info */}
@@ -52,13 +97,24 @@ const ProfileForm = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Full Name</label>
-              <Input placeholder="Enter your full name" />
+              <label className="block text-sm font-medium mb-1.5">Full Name <span className="text-destructive">*</span></label>
+              <Input 
+                placeholder="Enter your full name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email</label>
-              <Input type="email" placeholder="Enter your email" />
+              <label className="block text-sm font-medium mb-1.5">Email <span className="text-destructive">*</span></label>
+              <Input 
+                type="email" 
+                placeholder="Enter your email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
           </div>
           
@@ -67,7 +123,10 @@ const ProfileForm = () => {
             <div className="relative">
               <Input 
                 placeholder="Enter your location" 
-                className="pl-9" 
+                className="pl-9"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
               />
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             </div>
@@ -123,7 +182,7 @@ const ProfileForm = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {skillCategories.map((category) => (
+                {categories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
@@ -133,7 +192,7 @@ const ProfileForm = () => {
                   placeholder="Add a skill you can teach..."
                   value={newOfferedSkill}
                   onChange={(e) => setNewOfferedSkill(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addOfferedSkill()}
+                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault() && addOfferedSkill()}
                 />
                 <Button size="icon" type="button" onClick={addOfferedSkill} aria-label="Add skill">
                   <Plus size={16} />
@@ -176,7 +235,7 @@ const ProfileForm = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {skillCategories.map((category) => (
+                {categories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
@@ -186,7 +245,7 @@ const ProfileForm = () => {
                   placeholder="Add a skill you want to learn..."
                   value={newDesiredSkill}
                   onChange={(e) => setNewDesiredSkill(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addDesiredSkill()}
+                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault() && addDesiredSkill()}
                 />
                 <Button size="icon" type="button" onClick={addDesiredSkill} aria-label="Add skill">
                   <Plus size={16} />
@@ -197,10 +256,15 @@ const ProfileForm = () => {
         </div>
         
         {/* Save Button */}
-        <Button className="w-full sm:w-auto">
-          <Check size={16} className="mr-2" />
-          Save Profile
-        </Button>
+        <div className="pt-4 border-t flex flex-col sm:flex-row gap-3 justify-between items-center">
+          <p className="text-sm text-muted-foreground">
+            Your profile will be visible to other users in your area
+          </p>
+          <Button className="w-full sm:w-auto" onClick={handleSaveProfile}>
+            <UserPlus size={16} className="mr-2" />
+            Create Profile
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -392,3 +392,4 @@ const Coins = (props: any) => {
 };
 
 export default Exchange;
+

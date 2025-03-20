@@ -3,108 +3,56 @@ import { useState, useEffect } from 'react';
 import { Search, Filter, MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skill } from '@/components/SkillCard';
+import { Skill } from '@/data/skillsData';
 import SkillMatchCard from '@/components/SkillMatchCard';
-
-const dummySkills: (Skill & { matchPercentage: number, distance: string })[] = [
-  {
-    id: '1',
-    name: 'Guitar Lessons for Beginners',
-    category: 'Music',
-    description: 'Learn the basics of guitar playing with simple techniques for complete beginners.',
-    location: 'Chicago',
-    duration: '1 hour',
-    rating: 4.8,
-    userName: 'David Chen',
-    matchPercentage: 92,
-    distance: '2.3 miles'
-  },
-  {
-    id: '2',
-    name: 'French Cooking Basics',
-    category: 'Cooking',
-    description: 'Master the foundation of French cuisine with simple ingredients and techniques.',
-    location: 'Seattle',
-    duration: '2 hours',
-    rating: 4.9,
-    userName: 'Marie Dubois',
-    matchPercentage: 87,
-    distance: '4.1 miles'
-  },
-  {
-    id: '3',
-    name: 'Digital Photography',
-    category: 'Arts & Crafts',
-    description: 'Learn composition, lighting, and camera settings to take better photos.',
-    location: 'Austin',
-    duration: '1.5 hours',
-    rating: 4.7,
-    userName: 'James Wilson',
-    matchPercentage: 82,
-    distance: '3.5 miles'
-  },
-  {
-    id: '4',
-    name: 'Spanish Conversation Practice',
-    category: 'Languages',
-    description: 'Practice conversational Spanish with a fluent speaker for all levels.',
-    location: 'Miami',
-    duration: '1 hour',
-    rating: 4.6,
-    userName: 'Sofia Martinez',
-    matchPercentage: 79,
-    distance: '5.2 miles'
-  },
-  {
-    id: '5',
-    name: 'Basic Home Repairs',
-    category: 'Home Improvement',
-    description: 'Learn essential home repair skills that can save you money and time.',
-    location: 'Denver',
-    duration: '2 hours',
-    rating: 4.9,
-    userName: 'Robert Johnson',
-    matchPercentage: 74,
-    distance: '7.8 miles'
-  },
-  {
-    id: '6',
-    name: 'Yoga for Beginners',
-    category: 'Sports & Fitness',
-    description: 'Introduction to yoga basics with focus on proper alignment and breathing.',
-    location: 'Portland',
-    duration: '1 hour',
-    rating: 4.8,
-    userName: 'Emma Wilson',
-    matchPercentage: 68,
-    distance: '10.3 miles'
-  }
-];
+import { availableSkills, skillCategories } from '@/data/skillsData';
 
 const Discover = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
-  const [filteredSkills, setFilteredSkills] = useState(dummySkills);
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [skillsData, setSkillsData] = useState<(Skill & { matchPercentage: number, distance: string })[]>([]);
+  const [filteredSkills, setFilteredSkills] = useState<(Skill & { matchPercentage: number, distance: string })[]>([]);
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   useEffect(() => {
-    // Filter skills based on search term and location
-    const filtered = dummySkills.filter(skill => {
-      const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    // Transform availableSkills to include the additional properties
+    const enrichedSkills = availableSkills.map(skill => ({
+      ...skill,
+      matchPercentage: Math.floor(Math.random() * 40) + 60, // 60-100%
+      distance: `${(Math.random() * 20).toFixed(1)} miles`,
+      location: skill.location || ["Chicago", "Seattle", "Austin", "Miami", "Denver", "Portland"][Math.floor(Math.random() * 6)],
+      duration: skill.duration || ["30 min", "1 hour", "1.5 hours", "2 hours"][Math.floor(Math.random() * 4)],
+      rating: skill.rating || (Math.random() * 1.5 + 3.5).toFixed(1),
+      userName: skill.userName || ["David Chen", "Marie Dubois", "James Wilson", "Sofia Martinez", "Robert Johnson", "Emma Wilson"][Math.floor(Math.random() * 6)]
+    }));
+    
+    setSkillsData(enrichedSkills);
+    setFilteredSkills(enrichedSkills);
+  }, []);
+  
+  useEffect(() => {
+    // Filter skills based on search term, location, and category
+    const filtered = skillsData.filter(skill => {
+      const matchesSearch = !searchTerm || 
+        skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         skill.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
         skill.description.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesLocation = !locationFilter || 
         skill.location.toLowerCase().includes(locationFilter.toLowerCase());
+        
+      const matchesCategory = !categoryFilter ||
+        skill.category === categoryFilter;
       
-      return matchesSearch && matchesLocation;
+      return matchesSearch && matchesLocation && matchesCategory;
     });
     
     setFilteredSkills(filtered);
-  }, [searchTerm, locationFilter]);
+  }, [searchTerm, locationFilter, categoryFilter, skillsData]);
   
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 md:px-6">
@@ -139,10 +87,30 @@ const Discover = () => {
               />
             </div>
             
-            <Button className="h-10 gap-2">
-              <Filter size={16} />
-              More Filters
-            </Button>
+            <div className="flex gap-2">
+              <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {skillCategories.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              
+              <Button 
+                className="h-10 gap-2 whitespace-nowrap"
+                onClick={() => {
+                  setSearchTerm('');
+                  setLocationFilter('');
+                  setCategoryFilter('');
+                }}
+              >
+                <Filter size={16} />
+                Reset Filters
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -175,7 +143,7 @@ const Discover = () => {
             <p className="text-muted-foreground mb-6">
               Try adjusting your search criteria or location filter to find more skills.
             </p>
-            <Button onClick={() => { setSearchTerm(''); setLocationFilter(''); }}>
+            <Button onClick={() => { setSearchTerm(''); setLocationFilter(''); setCategoryFilter(''); }}>
               Clear Filters
             </Button>
           </div>

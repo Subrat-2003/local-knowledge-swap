@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, User, Calendar, Settings, LogOut } from 'lucide-react';
+import { ChevronLeft, User, Calendar, Settings, LogOut, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProfileForm from '@/components/ProfileForm';
@@ -52,7 +52,7 @@ const Profile = () => {
           <TabsList className="grid grid-cols-3 max-w-md mb-8">
             <TabsTrigger value="profile" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <User size={16} className="mr-1.5" />
-              Profile
+              Create Profile
             </TabsTrigger>
             <TabsTrigger value="availability" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Calendar size={16} className="mr-1.5" />

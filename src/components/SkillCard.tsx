@@ -3,18 +3,7 @@ import { useState } from 'react';
 import { Sparkles, Clock, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-export type Skill = {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  location: string;
-  duration: string;
-  rating: number;
-  userAvatar?: string;
-  userName: string;
-};
+import { Skill } from '@/data/skillsData';
 
 type SkillCardProps = {
   skill: Skill;
@@ -56,7 +45,7 @@ const SkillCard = ({ skill, isOffered = true, className }: SkillCardProps) => {
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
-              skill.userName.charAt(0)
+              skill.userName ? skill.userName.charAt(0) : "?"
             )}
           </div>
           
@@ -64,22 +53,30 @@ const SkillCard = ({ skill, isOffered = true, className }: SkillCardProps) => {
             <h3 className="text-lg font-semibold mb-1 flex items-center">
               {skill.name}
             </h3>
-            <p className="text-sm font-medium text-muted-foreground mb-1">
-              by {skill.userName}
-            </p>
+            {skill.userName && (
+              <p className="text-sm font-medium text-muted-foreground mb-1">
+                by {skill.userName}
+              </p>
+            )}
             <div className="flex items-center text-xs text-muted-foreground space-x-3">
-              <span className="flex items-center">
-                <MapPin size={12} className="mr-1" />
-                {skill.location}
-              </span>
-              <span className="flex items-center">
-                <Clock size={12} className="mr-1" />
-                {skill.duration}
-              </span>
-              <span className="flex items-center">
-                <Star size={12} className="mr-1 text-amber-500" />
-                {skill.rating}
-              </span>
+              {skill.location && (
+                <span className="flex items-center">
+                  <MapPin size={12} className="mr-1" />
+                  {skill.location}
+                </span>
+              )}
+              {skill.duration && (
+                <span className="flex items-center">
+                  <Clock size={12} className="mr-1" />
+                  {skill.duration}
+                </span>
+              )}
+              {skill.rating && (
+                <span className="flex items-center">
+                  <Star size={12} className="mr-1 text-amber-500" />
+                  {skill.rating}
+                </span>
+              )}
             </div>
           </div>
         </div>
