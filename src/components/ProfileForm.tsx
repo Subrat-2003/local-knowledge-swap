@@ -1,11 +1,13 @@
+
 import { useState } from 'react';
-import { Plus, X, Check, MapPin, UserPlus, BadgeCheck } from 'lucide-react';
+import { Plus, X, Check, MapPin, UserPlus, BadgeCheck, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { skillCategories as categories, availableSkills } from '@/data/skillsData';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileForm = () => {
   const [offeredSkills, setOfferedSkills] = useState<string[]>([]);
@@ -18,8 +20,10 @@ const ProfileForm = () => {
   const [email, setEmail] = useState('');
   const [location, setLocation] = useState('');
   const [isVerified, setIsVerified] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const addOfferedSkill = () => {
     if (newOfferedSkill && offeredSkills.length < 5) {
@@ -29,6 +33,7 @@ const ProfileForm = () => {
       toast({
         title: "Skill added",
         description: "Your skill has been added to your profile.",
+        variant: "default"
       });
     }
   };
@@ -41,6 +46,7 @@ const ProfileForm = () => {
       toast({
         title: "Learning interest added",
         description: "Your learning interest has been added to your profile.",
+        variant: "default"
       });
     }
   };
@@ -62,12 +68,46 @@ const ProfileForm = () => {
   };
   
   const handleSaveProfile = () => {
-    // Here we would connect to a backend to save the profile
-    // For now, show a success toast
-    toast({
-      title: "Profile created successfully",
-      description: "Your skills are now visible in the marketplace.",
-    });
+    // Validate required fields
+    if (!name || !email || !location) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields before saving.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Show saving state
+    setIsSaving(true);
+    
+    // Simulate saving to backend
+    setTimeout(() => {
+      // Here we would connect to a backend to save the profile
+      const profileData = {
+        name,
+        email,
+        location,
+        bio,
+        isVerified,
+        offeredSkills,
+        desiredSkills,
+        dateCreated: new Date().toISOString()
+      };
+      
+      // Store in local storage for persistence between page refreshes
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      
+      setIsSaving(false);
+      
+      toast({
+        title: "Profile saved successfully",
+        description: "Your skills are now visible in the marketplace.",
+      });
+      
+      // Redirect to discover page to see skills
+      navigate('/discover');
+    }, 1500);
   };
   
   const handleOfferedKeyDown = (e: React.KeyboardEvent) => {
@@ -271,9 +311,22 @@ const ProfileForm = () => {
           <p className="text-sm text-muted-foreground">
             Your profile will be visible to other users in your area
           </p>
-          <Button className="w-full sm:w-auto" onClick={handleSaveProfile}>
-            <UserPlus size={16} className="mr-2" />
-            Create Profile
+          <Button 
+            className="w-full sm:w-auto" 
+            onClick={handleSaveProfile}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>
+                <span className="animate-spin mr-2">⟳</span>
+                Saving Profile
+              </>
+            ) : (
+              <>
+                <Save size={16} className="mr-2" />
+                Save Profile
+              </>
+            )}
           </Button>
         </div>
       </div>

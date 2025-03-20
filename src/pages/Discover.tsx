@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { Search, Filter, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skill } from '@/data/skillsData';
@@ -23,6 +24,9 @@ const Discover = () => {
   }, []);
   
   useEffect(() => {
+    // Check if there's a user profile in localStorage
+    const userProfileString = localStorage.getItem('userProfile');
+    
     // Transform availableSkills to include the additional properties
     const enrichedSkills = availableSkills.map(skill => ({
       ...skill,
@@ -33,6 +37,37 @@ const Discover = () => {
       rating: skill.rating || Number((Math.random() * 1.5 + 3.5).toFixed(1)),
       userName: skill.userName || ["David Chen", "Marie Dubois", "James Wilson", "Sofia Martinez", "Robert Johnson", "Emma Wilson"][Math.floor(Math.random() * 6)]
     }));
+    
+    // If user profile exists, add their offered skills to the list
+    if (userProfileString) {
+      try {
+        const userProfile = JSON.parse(userProfileString);
+        if (userProfile.offeredSkills && userProfile.offeredSkills.length > 0) {
+          // Add user's offered skills
+          userProfile.offeredSkills.forEach((skillText: string, index: number) => {
+            const parts = skillText.split(': ');
+            if (parts.length === 2) {
+              const category = parts[0] as Skill['category'];
+              const name = parts[1];
+              
+              enrichedSkills.push({
+                id: `user-skill-${index}`,
+                name,
+                category,
+                description: `Skill offered by ${userProfile.name}`,
+                location: userProfile.location,
+                matchPercentage: 100, // Perfect match
+                distance: "0 miles", // It's your own skill
+                userName: userProfile.name,
+                rating: 5.0
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error parsing user profile:", error);
+      }
+    }
     
     setSkillsData(enrichedSkills);
     setFilteredSkills(enrichedSkills);
@@ -47,7 +82,7 @@ const Discover = () => {
         skill.description.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesLocation = !locationFilter || 
-        skill.location.toLowerCase().includes(locationFilter.toLowerCase());
+        skill.location?.toLowerCase().includes(locationFilter.toLowerCase());
         
       const matchesCategory = !categoryFilter ||
         skill.category === categoryFilter;
@@ -68,7 +103,7 @@ const Discover = () => {
           </p>
         </div>
         
-        {/* Search and Filter */}
+        {/* Search and Filter - removed Filter button */}
         <div className="glass-card rounded-xl p-5 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
@@ -91,7 +126,7 @@ const Discover = () => {
               />
             </div>
             
-            <div className="flex gap-2">
+            <div>
               <select
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 value={categoryFilter}
@@ -102,18 +137,6 @@ const Discover = () => {
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
-              
-              <Button 
-                className="h-10 gap-2 whitespace-nowrap"
-                onClick={() => {
-                  setSearchTerm('');
-                  setLocationFilter('');
-                  setCategoryFilter('');
-                }}
-              >
-                <Filter size={16} />
-                Reset Filters
-              </Button>
             </div>
           </div>
         </div>
