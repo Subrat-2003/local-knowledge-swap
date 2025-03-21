@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Plus, X, Check, MapPin, UserPlus, BadgeCheck, Save } from 'lucide-react';
+import { Plus, X, Check, MapPin, UserPlus, BadgeCheck, Save, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,6 +17,8 @@ const ProfileForm = () => {
   const [bio, setBio] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [location, setLocation] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -78,6 +79,25 @@ const ProfileForm = () => {
       return;
     }
     
+    // Validate password
+    if (!password) {
+      toast({
+        title: "Missing password",
+        description: "Please create a password for your account.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      toast({
+        title: "Password mismatch",
+        description: "Your passwords do not match.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Show saving state
     setIsSaving(true);
     
@@ -87,6 +107,7 @@ const ProfileForm = () => {
       const profileData = {
         name,
         email,
+        password, // In a real app, this would be hashed on the server
         location,
         bio,
         isVerified,
@@ -97,6 +118,7 @@ const ProfileForm = () => {
       
       // Store in local storage for persistence between page refreshes
       localStorage.setItem('userProfile', JSON.stringify(profileData));
+      localStorage.setItem('isLoggedIn', 'true');
       
       setIsSaving(false);
       
@@ -166,6 +188,36 @@ const ProfileForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Password <span className="text-destructive">*</span></label>
+              <div className="relative">
+                <Input 
+                  type="password" 
+                  placeholder="Create a password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pl-9"
+                />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Confirm Password <span className="text-destructive">*</span></label>
+              <div className="relative">
+                <Input 
+                  type="password" 
+                  placeholder="Confirm your password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="pl-9"
+                />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              </div>
             </div>
           </div>
           

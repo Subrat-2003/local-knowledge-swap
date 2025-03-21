@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,9 +30,9 @@ const Navbar = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    // Check if user profile exists in localStorage
-    const userProfile = localStorage.getItem('userProfile');
-    if (userProfile) {
+    // Check if user is logged in from localStorage
+    const loggedInStatus = localStorage.getItem('isLoggedIn');
+    if (loggedInStatus === 'true') {
       setIsLoggedIn(true);
     }
   }, []);
@@ -53,14 +54,15 @@ const Navbar = () => {
   
   const navigationItems = [
     { name: 'Home', path: '/' },
-    { name: 'Create Profile', path: '/profile' },
     { name: 'Find Skills to Learn', path: '/discover' },
     { name: 'Set Up Skill Exchange', path: '/exchange' },
   ];
 
-  // Add "My Profile" if user is logged in
+  // Add "My Profile" and "Create Profile" based on login status
   if (isLoggedIn) {
     navigationItems.push({ name: 'My Profile', path: '/profile' });
+  } else {
+    navigationItems.push({ name: 'Create Profile', path: '/profile' });
   }
   
   const isActive = (path: string) => {
@@ -78,17 +80,26 @@ const Navbar = () => {
       return;
     }
 
-    // Check if user profile exists with this email
+    // Check if user profile exists with this email and password
     const userProfileString = localStorage.getItem('userProfile');
     if (userProfileString) {
       const userProfile = JSON.parse(userProfileString);
-      if (userProfile.email === email) {
-        // In a real app, we would validate the password here
+      if (userProfile.email === email && userProfile.password === password) {
+        localStorage.setItem('isLoggedIn', 'true');
         setIsLoggedIn(true);
         toast({
           title: "Sign in successful",
           description: "Welcome back to the community!",
         });
+        
+        // Clear form fields
+        setEmail('');
+        setPassword('');
+        
+        // If on profile page, refresh to show user data
+        if (location.pathname === '/profile') {
+          window.location.reload();
+        }
         return;
       }
     }
@@ -103,19 +114,31 @@ const Navbar = () => {
 
   const handleSignInWithGoogle = () => {
     // Simulate Google sign-in
-    toast({
-      title: "Google sign-in",
-      description: "This would connect to Google in a real app",
-    });
+    localStorage.setItem('isLoggedIn', 'true');
     setIsLoggedIn(true);
+    
+    toast({
+      title: "Google sign-in successful",
+      description: "Welcome to the community!",
+    });
+    
+    // If on profile page, refresh to show user data
+    if (location.pathname === '/profile') {
+      window.location.reload();
+    }
   };
 
   const handleSignOut = () => {
+    localStorage.removeItem('isLoggedIn');
     setIsLoggedIn(false);
+    
     toast({
       title: "Signed out",
       description: "You have been signed out successfully",
     });
+    
+    // Navigate to home page
+    navigate('/');
   };
   
   return (

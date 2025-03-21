@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle2, CircleX, Calendar as CalendarIcon, Send, MapPin, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CoinBalance from '@/components/CoinBalance';
 import { cn } from '@/lib/utils';
+import { useLocation } from 'react-router-dom';
 import { 
   Dialog, 
   DialogContent, 
@@ -28,6 +29,7 @@ type ExchangeRequest = {
   location?: string;
   message?: string;
   coins: number;
+  addedToCalendar?: boolean;
 };
 
 const dummyRequests: ExchangeRequest[] = [
@@ -87,17 +89,32 @@ const CoinsIcon = (props: any) => {
 };
 
 const Exchange = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('received');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [requests, setRequests] = useState<ExchangeRequest[]>(dummyRequests);
   const [selectedRequest, setSelectedRequest] = useState<ExchangeRequest | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState('');
+  const [message, setMessage] = useState('');
   const { toast } = useToast();
   
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Check if we should show the "sent" tab based on URL params
+    const searchParams = new URLSearchParams(location.search);
+    const showSent = searchParams.get('tab') === 'sent';
+    const requestedSkill = searchParams.get('skill');
+    
+    if (showSent) {
+      setActiveTab('sent');
+      if (requestedSkill) {
+        setSelectedSkill(requestedSkill);
+      }
+    }
+  }, [location]);
   
   useEffect(() => {
     if (selectedDate) {
@@ -158,8 +175,78 @@ const Exchange = () => {
     });
   };
 
+  const handleDeleteRequest = (requestId: string) => {
+    const updatedRequests = requests.filter(req => req.id !== requestId);
+    setRequests(updatedRequests);
+    
+    toast({
+      title: "Request Deleted",
+      description: "The request has been removed from your list.",
+    });
+  };
+
   const handleViewDetails = (request: ExchangeRequest) => {
     setSelectedRequest(request);
+  };
+
+  const handleAddToCalendar = (requestId: string) => {
+    // Update the request to mark it as added to calendar
+    const updatedRequests = requests.map(req => 
+      req.id === requestId ? { ...req, addedToCalendar: true } : req
+    );
+    setRequests(updatedRequests);
+    
+    toast({
+      title: "Added to Calendar",
+      description: "The skill exchange session has been added to your calendar.",
+    });
+  };
+
+  const handleSendRequest = () => {
+    if (!selectedSkill) {
+      toast({
+        title: "Missing information",
+        description: "Please select a skill you want to learn.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedDate || !selectedTime) {
+      toast({
+        title: "Missing information",
+        description: "Please select a date and time for the exchange.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create a new request
+    const newRequest = {
+      id: `new-${Date.now()}`,
+      skillName: selectedSkill,
+      userName: "You",
+      status: 'pending' as const,
+      date: selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      time: selectedTime,
+      message: message,
+      coins: 50
+    };
+
+    // Add the new request to the list
+    setRequests([...requests, newRequest]);
+
+    // Clear form fields
+    setSelectedSkill('');
+    setSelectedDate(null);
+    setSelectedTime(null);
+    setMessage('');
+
+    // Show success toast
+    toast({
+      title: "Request Sent",
+      description: "Your skill exchange request has been sent successfully.",
+    });
   };
   
   return (
@@ -196,7 +283,7 @@ const Exchange = () => {
           
           <div className="animate-fade-in">
             <TabsContent value="received" className="mt-0 space-y-6">
-              {requests.map((request) => (
+              {requests.filter(req => req.userName !== "You").map((request) => (
                 <div 
                   key={request.id} 
                   className="glass-card rounded-xl p-5 transition-all duration-300"
@@ -331,8 +418,13 @@ const Exchange = () => {
                                   <CoinsIcon size={16} className="mr-1" />
                                   {request.coins} coins
                                 </div>
-                                <Button size="sm" variant="outline">
-                                  Add to Calendar
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleAddToCalendar(request.id)}
+                                  disabled={request.addedToCalendar}
+                                >
+                                  {request.addedToCalendar ? "Added to Calendar" : "Add to Calendar"}
                                 </Button>
                               </div>
                             </div>
@@ -340,8 +432,14 @@ const Exchange = () => {
                         </Dialog>
                       )}
                       
-                      {request.status === 'declined' && (
-                        <Button variant="outline" size="sm">
+                      {(request.status === 'declined' || request.status === 'confirmed') && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-destructive"
+                          onClick={() => handleDeleteRequest(request.id)}
+                        >
+                          <Trash2 size={14} className="mr-1" />
                           Delete
                         </Button>
                       )}
@@ -375,6 +473,17 @@ const Exchange = () => {
                   )}
                 </div>
               ))}
+              
+              {requests.filter(req => req.userName !== "You").length === 0 && (
+                <div className="glass-card rounded-xl p-6 text-center">
+                  <CalendarIcon size={48} className="mx-auto mb-4 text-muted-foreground" />
+                  <h2 className="text-xl font-medium mb-2">No Exchange Requests</h2>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    You don't have any skill exchange requests yet. Explore skills to connect with others!
+                  </p>
+                  <Button>Find Skills to Exchange</Button>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="sent" className="mt-0">
@@ -389,7 +498,11 @@ const Exchange = () => {
                 <div className="p-6">
                   <div className="mb-6">
                     <label className="block text-sm font-medium mb-1.5">Skill You Want to Learn</label>
-                    <Input placeholder="Search for a skill or person..." />
+                    <Input 
+                      placeholder="Search for a skill or person..." 
+                      value={selectedSkill} 
+                      onChange={(e) => setSelectedSkill(e.target.value)}
+                    />
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -468,6 +581,8 @@ const Exchange = () => {
                     <Textarea 
                       placeholder="Explain why you're interested in learning this skill..."
                       rows={3}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                     />
                   </div>
                   
@@ -477,11 +592,97 @@ const Exchange = () => {
                       <span className="font-medium">50 Coins</span>
                     </div>
                     
-                    <Button>
+                    <Button onClick={handleSendRequest}>
                       <Send size={14} className="mr-1.5" />
                       Send Request
                     </Button>
                   </div>
+                </div>
+              </div>
+              
+              <div className="mt-8">
+                <h3 className="text-lg font-medium mb-4">Your Sent Requests</h3>
+                
+                <div className="space-y-6">
+                  {requests.filter(req => req.userName === "You").map((request) => (
+                    <div 
+                      key={request.id} 
+                      className="glass-card rounded-xl p-5 transition-all duration-300"
+                    >
+                      <div className="flex flex-col md:flex-row justify-between gap-4">
+                        <div>
+                          <h2 className="text-lg font-semibold">{request.skillName}</h2>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            Sent by You
+                          </p>
+                          
+                          {request.status === 'pending' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              Awaiting Response
+                            </span>
+                          )}
+                          
+                          {request.status === 'confirmed' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              Confirmed
+                            </span>
+                          )}
+                          
+                          {request.status === 'declined' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              Declined
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2 items-center">
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground">Exchange Fee</p>
+                            <div className="flex items-center text-amber-500 font-medium">
+                              <CoinsIcon size={16} className="mr-1" />
+                              {request.coins}
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-destructive"
+                            onClick={() => handleDeleteRequest(request.id)}
+                          >
+                            <Trash2 size={14} className="mr-1" />
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {request.message && (
+                        <div className="mt-4 p-3 bg-secondary/50 rounded-lg text-sm">
+                          <p className="text-xs font-medium mb-1">Message:</p>
+                          <p>{request.message}</p>
+                        </div>
+                      )}
+                      
+                      {request.date && request.time && (
+                        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                          <div className="flex items-center">
+                            <Calendar size={14} className="mr-1.5 text-muted-foreground" />
+                            <span>{request.date}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Clock size={14} className="mr-1.5 text-muted-foreground" />
+                            <span>{request.time}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {requests.filter(req => req.userName === "You").length === 0 && (
+                    <p className="text-muted-foreground text-center p-4">
+                      You haven't sent any exchange requests yet. Use the form above to request a skill exchange.
+                    </p>
+                  )}
                 </div>
               </div>
             </TabsContent>
