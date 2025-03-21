@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Sparkles, Clock, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Skill } from '@/data/skillsData';
+import { useNavigate } from 'react-router-dom';
 
 type SkillCardProps = {
   skill: Skill;
@@ -13,6 +13,11 @@ type SkillCardProps = {
 
 const SkillCard = ({ skill, isOffered = true, className }: SkillCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleRequestExchange = () => {
+    navigate(`/exchange?tab=sent&skill=${encodeURIComponent(skill.name)}`);
+  };
   
   return (
     <div 
@@ -96,6 +101,7 @@ const SkillCard = ({ skill, isOffered = true, className }: SkillCardProps) => {
               "transition-all duration-300",
               isHovered ? "opacity-100" : "opacity-80"
             )}
+            onClick={handleRequestExchange}
           >
             <Sparkles size={14} className="mr-1" />
             {isOffered ? 'Request Exchange' : 'Offer Help'}

@@ -1,8 +1,8 @@
-
 import { Sparkles, Clock, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Skill } from '@/data/skillsData';
+import { useNavigate } from 'react-router-dom';
 
 type SkillMatchCardProps = {
   skill: Skill;
@@ -12,6 +12,12 @@ type SkillMatchCardProps = {
 };
 
 const SkillMatchCard = ({ skill, matchPercentage, distance, className }: SkillMatchCardProps) => {
+  const navigate = useNavigate();
+  
+  const handleRequestExchange = () => {
+    navigate(`/exchange?tab=sent&skill=${encodeURIComponent(skill.name)}`);
+  };
+  
   return (
     <div 
       className={cn(
@@ -79,7 +85,7 @@ const SkillMatchCard = ({ skill, matchPercentage, distance, className }: SkillMa
             {skill.category}
           </span>
           
-          <Button size="sm">
+          <Button size="sm" onClick={handleRequestExchange}>
             Request Exchange
           </Button>
         </div>
