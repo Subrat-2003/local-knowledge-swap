@@ -1,22 +1,11 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogIn, LogOut, User, Leaf, Recycle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { BrandLogo } from './navigation/BrandLogo';
+import { DesktopNavigation } from './navigation/DesktopNavigation';
+import { MobileMenu } from './navigation/MobileMenu';
 
 interface EcoNavbarProps {
   extraLinks?: Array<{ href: string; label: string; }>;
@@ -71,10 +60,6 @@ const EcoNavbar = ({ extraLinks = [] }: EcoNavbarProps) => {
   if (isLoggedIn) {
     navigationItems.push({ name: 'Dashboard', path: '/dashboard' });
   }
-  
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
 
   const handleSignIn = () => {
     // Validate inputs
@@ -160,169 +145,30 @@ const EcoNavbar = ({ extraLinks = [] }: EcoNavbarProps) => {
       } transition-all duration-200`}
     >
       <div className="container flex items-center justify-between h-16 px-4 md:px-6">
-        <Link to="/" className="flex items-center">
-          <div className="flex items-center">
-            <div className="relative">
-              <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
-                <Recycle size={20} className="text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 h-3 w-3 bg-amber-400 rounded-full animate-pulse" />
-            </div>
-            <div className="ml-2 font-bold text-lg">
-              <span className="text-green-600">Eco</span>
-              <span className="text-muted-foreground">Waste</span>
-            </div>
-          </div>
-        </Link>
+        <BrandLogo />
         
         {!isMobile ? (
-          <nav className="flex items-center gap-1 md:gap-2">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                  isActive(item.path)
-                    ? 'bg-green-600 text-primary-foreground'
-                    : 'text-foreground/80 hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-            {isLoggedIn ? (
-              <Button variant="outline" className="ml-2" onClick={handleSignOut}>
-                <LogOut size={16} className="mr-1.5" />
-                Sign Out
-              </Button>
-            ) : (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="default" className="ml-2 bg-green-600 hover:bg-green-700">
-                    <LogIn size={16} className="mr-1.5" />
-                    Sign In
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Sign In</DialogTitle>
-                    <DialogDescription>
-                      Sign in to your EcoWaste account to access your dashboard and services
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="your@email.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter className="flex flex-col gap-2">
-                    <Button onClick={handleSignIn} className="w-full bg-green-600 hover:bg-green-700">Sign In</Button>
-                    <div className="text-center text-sm text-muted-foreground mt-2">
-                      Don't have an account?{" "}
-                      <Link to="/signup" className="text-green-600 hover:underline">
-                        Create Account
-                      </Link>
-                    </div>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
-          </nav>
+          <DesktopNavigation 
+            navigationItems={navigationItems}
+            isLoggedIn={isLoggedIn}
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            handleSignIn={handleSignIn}
+            handleSignOut={handleSignOut}
+          />
         ) : (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu size={24} />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[80%] sm:w-[350px]">
-              <div className="flex flex-col gap-4 mt-8">
-                {navigationItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`px-3 py-3 text-base rounded-md transition-colors ${
-                      isActive(item.path)
-                        ? 'bg-green-600 text-primary-foreground'
-                        : 'text-foreground/80 hover:bg-accent hover:text-accent-foreground'
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                {isLoggedIn ? (
-                  <Button className="mt-2 bg-green-600 hover:bg-green-700" onClick={handleSignOut}>
-                    <LogOut size={16} className="mr-1.5" />
-                    Sign Out
-                  </Button>
-                ) : (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="mt-2 bg-green-600 hover:bg-green-700">
-                        <LogIn size={16} className="mr-1.5" />
-                        Sign In
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Sign In</DialogTitle>
-                        <DialogDescription>
-                          Sign in to your EcoWaste account to access your dashboard and services
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="email-mobile">Email</Label>
-                          <Input 
-                            id="email-mobile" 
-                            type="email" 
-                            placeholder="your@email.com" 
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="password-mobile">Password</Label>
-                          <Input 
-                            id="password-mobile" 
-                            type="password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter className="flex flex-col gap-2">
-                        <Button onClick={handleSignIn} className="w-full bg-green-600 hover:bg-green-700">Sign In</Button>
-                        <div className="text-center text-sm text-muted-foreground mt-2">
-                          Don't have an account?{" "}
-                          <Link to="/signup" className="text-green-600 hover:underline">
-                            Create Account
-                          </Link>
-                        </div>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+          <MobileMenu 
+            navigationItems={navigationItems}
+            isLoggedIn={isLoggedIn}
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            handleSignIn={handleSignIn}
+            handleSignOut={handleSignOut}
+          />
         )}
       </div>
     </header>
