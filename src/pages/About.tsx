@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { Check, Users, Target, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const About = () => {
   // Scroll to top when component mounts
@@ -17,6 +18,39 @@ const About = () => {
     "Implement sensor-based notification system in smart dustbins to optimize waste collection routes.",
     "Establish direct partnerships with factories to sell segregated waste, ensuring resource recovery.",
     "Minimize human intervention in waste collection by utilizing automated systems."
+  ];
+
+  const leadershipTeam = [
+    {
+      name: "Purbi Chandra",
+      role: "Chief Executive Officer",
+      bio: "Environmental engineer with expertise in sustainable waste management and urban infrastructure development.",
+      avatar: "PC"
+    },
+    {
+      name: "Manohar Sha",
+      role: "Chief Technology Officer",
+      bio: "IoT specialist with extensive background in sensor technologies, AI integration, and smart city solutions.",
+      avatar: "MS"
+    },
+    {
+      name: "Sudhanshu Jha",
+      role: "Chief Operations Officer",
+      bio: "Logistics expert specializing in route optimization and sustainable operations management.",
+      avatar: "SJ"
+    },
+    {
+      name: "Gayatri Palai",
+      role: "Chief Marketing Officer",
+      bio: "Marketing strategist with focus on community engagement and environmental awareness campaigns.",
+      avatar: "GP"
+    },
+    {
+      name: "Subrat Kumar Jena",
+      role: "Chief Financial Officer",
+      bio: "Financial analyst with expertise in sustainable business models and green investments.",
+      avatar: "SJ"
+    }
   ];
 
   return (
@@ -95,51 +129,19 @@ const About = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" 
-                  alt="CEO" 
-                  className="w-full h-full object-cover"
-                />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {leadershipTeam.map((member, index) => (
+              <div key={index} className="bg-white/70 dark:bg-gray-800/70 p-6 rounded-xl border border-green-100 dark:border-green-800 shadow-sm text-center hover:shadow-md transition-shadow">
+                <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-green-100 dark:border-green-800">
+                  <AvatarFallback className="bg-green-600 text-white text-xl font-semibold">{member.avatar}</AvatarFallback>
+                </Avatar>
+                <h3 className="text-xl font-bold">{member.name}</h3>
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-3">{member.role}</p>
+                <p className="text-sm text-muted-foreground">
+                  {member.bio}
+                </p>
               </div>
-              <h3 className="text-xl font-bold">Dr. Emily Chen</h3>
-              <p className="text-sm text-muted-foreground mb-2">Founder & CEO</p>
-              <p className="text-sm text-muted-foreground">
-                Environmental engineer with 15+ years of experience in sustainable waste management solutions.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" 
-                  alt="CTO" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold">Raj Patel</h3>
-              <p className="text-sm text-muted-foreground mb-2">Chief Technology Officer</p>
-              <p className="text-sm text-muted-foreground">
-                IoT specialist with extensive background in sensor technologies and AI integration.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" 
-                  alt="COO" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold">Maria Rodriguez</h3>
-              <p className="text-sm text-muted-foreground mb-2">Chief Operations Officer</p>
-              <p className="text-sm text-muted-foreground">
-                Supply chain expert specializing in logistics optimization and sustainable operations.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>

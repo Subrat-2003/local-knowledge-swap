@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const Contact = () => {
   const [name, setName] = useState('');
@@ -52,6 +53,44 @@ const Contact = () => {
     }, 1500);
   };
 
+  const teamContacts = [
+    {
+      name: "Purbi Chandra",
+      role: "Chief Executive Officer",
+      email: "purbi.chandra@ecowaste.com",
+      phone: "+91 93XXXXXXXX",
+      avatar: "PC"
+    },
+    {
+      name: "Manohar Sha",
+      role: "Chief Technology Officer",
+      email: "manohar.sha@ecowaste.com",
+      phone: "+91 93XXXXXXXX",
+      avatar: "MS"
+    },
+    {
+      name: "Sudhanshu Jha",
+      role: "Chief Operations Officer",
+      email: "sudhanshu.jha@ecowaste.com",
+      phone: "+91 93XXXXXXXX",
+      avatar: "SJ"
+    },
+    {
+      name: "Gayatri Palai",
+      role: "Chief Marketing Officer",
+      email: "gayatri.palai@ecowaste.com",
+      phone: "+91 93XXXXXXXX",
+      avatar: "GP"
+    },
+    {
+      name: "Subrat Kumar Jena",
+      role: "Chief Financial Officer",
+      email: "subratjena2911@gmail.com",
+      phone: "+91 9338681466",
+      avatar: "SJ"
+    }
+  ];
+
   return (
     <main className="pt-24">
       {/* Hero Section */}
@@ -66,9 +105,16 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Information */}
+      {/* Primary Contact Information */}
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container px-4 md:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-bold mb-4">Contact Information</h2>
+            <p className="text-muted-foreground">
+              Reach out to us through any of the following channels.
+            </p>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <Card>
               <CardContent className="p-6 flex flex-col items-center text-center">
@@ -76,8 +122,8 @@ const Contact = () => {
                   <Phone className="text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="font-bold mb-2">Phone</h3>
-                <p className="text-muted-foreground">+1 (555) 123-4567</p>
-                <p className="text-muted-foreground">Mon-Fri: 9am-5pm EST</p>
+                <p className="text-muted-foreground font-semibold">+91 9338681466</p>
+                <p className="text-muted-foreground">Mon-Fri: 9am-5pm IST</p>
               </CardContent>
             </Card>
             
@@ -87,8 +133,8 @@ const Contact = () => {
                   <Mail className="text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="font-bold mb-2">Email</h3>
+                <p className="text-muted-foreground font-semibold">subratjena2911@gmail.com</p>
                 <p className="text-muted-foreground">info@ecowaste.com</p>
-                <p className="text-muted-foreground">support@ecowaste.com</p>
               </CardContent>
             </Card>
             
@@ -98,7 +144,7 @@ const Contact = () => {
                   <MapPin className="text-green-600 dark:text-green-400" />
                 </div>
                 <h3 className="font-bold mb-2">Office</h3>
-                <p className="text-muted-foreground">123 Green Street</p>
+                <p className="text-muted-foreground font-semibold">Gangapada</p>
                 <p className="text-muted-foreground">Eco City, EC 12345</p>
               </CardContent>
             </Card>
@@ -106,8 +152,48 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Form & Map */}
+      {/* Team Directory */}
       <section className="py-16 bg-secondary/30">
+        <div className="container px-4 md:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-bold mb-4">Team Directory</h2>
+            <p className="text-muted-foreground">
+              Connect directly with our leadership team.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {teamContacts.map((member, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start">
+                    <Avatar className="w-16 h-16 mr-4 border-2 border-green-100 dark:border-green-800">
+                      <AvatarFallback className="bg-green-600 text-white">{member.avatar}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-bold text-lg">{member.name}</h3>
+                      <p className="text-sm text-green-600 dark:text-green-400 mb-2">{member.role}</p>
+                      <div className="space-y-1">
+                        <p className="text-sm flex items-center text-muted-foreground">
+                          <Mail className="w-4 h-4 mr-2" />
+                          {member.email}
+                        </p>
+                        <p className="text-sm flex items-center text-muted-foreground">
+                          <Phone className="w-4 h-4 mr-2" />
+                          {member.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form & Map */}
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container px-4 md:px-6">
           <div className="max-w-5xl mx-auto">
             <Tabs defaultValue="contact" className="w-full">

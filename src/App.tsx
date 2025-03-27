@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
+import RouteOptimization from "./pages/RouteOptimization";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/route-optimization" element={<RouteOptimization />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
