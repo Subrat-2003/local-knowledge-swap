@@ -18,7 +18,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const EcoNavbar = () => {
+interface EcoNavbarProps {
+  extraLinks?: Array<{ href: string; label: string; }>;
+}
+
+const EcoNavbar = ({ extraLinks = [] }: EcoNavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -57,6 +61,11 @@ const EcoNavbar = () => {
     { name: 'Products', path: '/products' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  // Add extra links from props
+  extraLinks.forEach(link => {
+    navigationItems.push({ name: link.label, path: link.href });
+  });
 
   // Add "Dashboard" for logged-in users
   if (isLoggedIn) {
