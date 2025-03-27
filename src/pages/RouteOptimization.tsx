@@ -134,7 +134,7 @@ const RouteOptimization = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">7</div>
-                <p className="text-xs text-red-500 mt-1">3 critical (>90% full)</p>
+                <p className="text-xs text-red-500 mt-1">3 critical ({'>'}90% full)</p>
               </CardContent>
             </Card>
           </div>
@@ -329,7 +329,7 @@ const RouteOptimization = () => {
                       <div className="flex items-center justify-between mt-1">
                         <div className="flex items-center">
                           <Trash2 className="text-red-500 mr-1" size={14} />
-                          <span className="text-sm text-muted-foreground">2 critical (>90%)</span>
+                          <span className="text-sm text-muted-foreground">2 critical ({'>'}90%)</span>
                         </div>
                         <div className="flex items-center">
                           <AlertTriangle className="text-amber-500 mr-1" size={14} />
