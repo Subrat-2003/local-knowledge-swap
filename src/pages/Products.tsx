@@ -1,5 +1,6 @@
+
 import { useEffect } from 'react';
-import { CheckCircle, Zap, BarChart3, Shield, Truck, Factory, Recycle, Cpu, Drop, Laptop } from 'lucide-react';
+import { CheckCircle, Zap, BarChart3, Shield, Truck, Factory, Recycle, Cpu, Droplet, Laptop } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +36,7 @@ const Products = () => {
   ];
 
   const wasteSectors = [
-    { icon: Drop, title: "Wet Waste", description: "Biodegradable materials including food waste, garden waste, and other compostable items.", color: "green" },
+    { icon: Droplet, title: "Wet Waste", description: "Biodegradable materials including food waste, garden waste, and other compostable items.", color: "green" },
     { icon: Recycle, title: "Dry Waste", description: "Non-biodegradable materials like plastic, paper, glass, metal, and textiles for recycling.", color: "amber" },
     { icon: Laptop, title: "E-Waste", description: "Electronic waste including batteries, small gadgets, and other electronic components for safe disposal.", color: "red" }
   ];
