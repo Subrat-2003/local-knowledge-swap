@@ -60,7 +60,7 @@ const Products = () => {
             </div>
             <div className="flex justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" 
+                src="/lovable-uploads/8a8f577f-7747-4b9b-b6d3-f7d25a8a1345.png" 
                 alt="Smart Dustbin" 
                 className="rounded-xl shadow-lg max-w-full h-auto"
               />
@@ -109,7 +109,7 @@ const Products = () => {
             <div className="order-1 md:order-2 flex justify-center">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1585142938462-65de7e711cf7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" 
+                  src="/lovable-uploads/8a8f577f-7747-4b9b-b6d3-f7d25a8a1345.png" 
                   alt="Smart Dustbin with Segregation" 
                   className="rounded-xl shadow-lg max-w-full h-auto"
                 />

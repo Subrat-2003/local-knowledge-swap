@@ -45,7 +45,7 @@ const HowItWorks = () => {
               {activeStep === 0 && (
                 <div className="animation-fade-in w-full max-w-[300px]">
                   <img 
-                    src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" 
+                    src="/lovable-uploads/8a8f577f-7747-4b9b-b6d3-f7d25a8a1345.png" 
                     alt="Smart Dustbin" 
                     className="w-full h-auto rounded-lg shadow-lg"
                   />
