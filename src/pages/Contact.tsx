@@ -55,9 +55,9 @@ const Contact = () => {
 
   const teamContacts = [
     {
-      name: "Purbi Chandra",
+      name: "Purabi Chanda",
       role: "Chief Executive Officer",
-      email: "purbi.chandra@ecowaste.com",
+      email: "purabi.chanda@ecowaste.com",
       phone: "+91 93XXXXXXXX",
       avatar: "PC"
     },
